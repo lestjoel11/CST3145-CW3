@@ -25,11 +25,11 @@ let lessons = [
     },
     {
         id: 4,
-        subject: 'Geography',
+        subject: 'Arts',
         location: 'Malta Campus',
         price: 1004,
         space: 5,
-        icon: "fas fa-globe-americas"
+        icon: "fas fa-palette"
     },
     {
         id: 5,
