@@ -12,13 +12,21 @@
 
 <div id="app">
     <div class="container">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
 
+        <div class="form-group">
+            <label for="sort-sel">Sort select</label>
+            <select class="form-control" id="sort-sel" v-model="selectedSort">
+                <option v-for="sort in sorts">{{sort}}</option>
+            </select>
+
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
             <div v-for="lesson in sortedLessons">
                 <div class="col mb-4">
                     <div class="card">
                         <div class="d-flex justify-content-center">
-                            <span v-bind:class="lesson.icon" style="font-size: 10vw;"></span>
+                            <span style="font-size: 10vw;" v-bind:class="lesson.icon"></span>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">{{lesson.subject}}</h5>
@@ -43,20 +51,43 @@
         el: '#app',
         data: {
             lessons: lessons,
+            selectedSort: 'price',
+            sorts: ['price', 'subject', 'availability', 'location'],
         },
         computed: {
             sortedLessons() {
                 let lessonsArray = this.lessons.slice(0);
 
-                function compare(a, b) {
-                    if (a.price > b.price)
-                        return 1;
-                    if (a.price < b.price)
-                        return -1;
-                    return 0;
+                if (this.selectedSort === 'subject') {
+                    return lessonsArray.sort((a, b) => {
+                        if (a.subject < b.subject) return -1;
+                        if (a.subject > b.subject) return 1;
+                        return 0;
+                    });
+                }
+                if (this.selectedSort === 'price') {
+                    return lessonsArray.sort((a, b) => {
+                        if (a.price < b.price) return -1;
+                        if (a.price > b.price) return 1;
+                        return 0;
+                    });
+                }
+                if (this.selectedSort === 'availability') {
+                    return lessonsArray.sort((a, b) => {
+                        if (a.space < b.space) return -1;
+                        if (a.space > b.space) return 1;
+                        return 0;
+                    });
+                }
+                if (this.selectedSort === 'location') {
+                    return lessonsArray.sort((a, b) => {
+                        if (a.location < b.location) return -1;
+                        if (a.location > b.location) return 1;
+                        return 0;
+                    });
                 }
 
-                return lessonsArray.sort(compare)
+                return lessonsArray.sort()
             }
         }
     });
