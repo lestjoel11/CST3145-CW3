@@ -42,8 +42,33 @@
                                 Space: {{lesson.space - cartCount(lesson.id)}}<br>
                             </div>
                             <br>
-                            <button class="btn btn-primary" @click="addToCart(lesson)" v-if="canAddToCart(lesson)">Add To Cart</button>
+                            <button class="btn btn-primary" @click="addToCart(lesson)" v-if="canAddToCart(lesson)">Add item</button>
                             <button class="btn btn btn-secondary" disabled="disabled" v-else>Sold Out!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="this.cart.length > 0">
+            <h3>Checkout</h3>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                <div v-if="Math.abs(lesson.space - cartCount(lesson.id) - 5) > 0" v-for="lesson in lessons">
+                    <div class="col mb-4">
+                        <div class="card">
+                            <div class="d-flex justify-content-center">
+                                <span style="font-size: 10vw;" v-bind:class="lesson.icon"></span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{lesson.subject}}</h5>
+                                <div class="card-text">
+                                    Price:{{lesson.price}} <br>
+                                    Location: {{lesson.location}}<br>
+                                    Quantity: {{Math.abs(lesson.space - cartCount(lesson.id) - 5)}}<br>
+                                </div>
+                                <br>
+                                <button class="btn btn-danger" @click="removeFromCart(lesson)">Remove item</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -68,6 +93,12 @@
             addToCart: function (lesson) {
                 this.cart.push(lesson.id);
             },
+            removeFromCart: function (lesson) {
+                const index = this.cart.indexOf(lesson.id);
+                if (index > -1) {
+                    this.cart.splice(index, 1);
+                }
+            },
             canAddToCart: function (lesson) {
                 return lesson.space > this.cartCount(lesson.id);
             },
@@ -82,7 +113,6 @@
             }
         },
         computed: {
-            
             sortedLessons() {
                 let lessonsArray = this.lessons.slice(0);
 
