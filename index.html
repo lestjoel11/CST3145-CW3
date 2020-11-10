@@ -11,49 +11,26 @@
 <body>
 
 <div id="app">
-    <div class="container">
 
-        <div class="form-group">
-            <label for="sort-sel">Sort select</label>
-            <select class="form-control" id="sort-sel" v-model="selectedSort">
-                <option v-for="sort in sorts">{{sort}}</option>
-            </select>
-        </div>
+    <div v-if="showLessons">
+        <div class="container">
 
-        <div class="form-group">
-            <label for="sort-ord">Sort order</label>
-            <select class="form-control" id="sort-ord" v-model="sort_ord">
-                <option v-for="sort_ord in sort_ords">{{sort_ord}}</option>
-            </select>
-        </div>
-
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-            <div v-for="lesson in sortedLessons">
-                <div class="col mb-4">
-                    <div class="card">
-                        <div class="d-flex justify-content-center">
-                            <span style="font-size: 10vw;" v-bind:class="lesson.icon"></span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{lesson.subject}}</h5>
-                            <div class="card-text">
-                                Price:{{lesson.price}} <br>
-                                Location: {{lesson.location}}<br>
-                                Space: {{lesson.space - cartCount(lesson.id)}}<br>
-                            </div>
-                            <br>
-                            <button class="btn btn-primary" @click="addToCart(lesson)" v-if="canAddToCart(lesson)">Add item</button>
-                            <button class="btn btn btn-secondary" disabled="disabled" v-else>Sold Out!</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="sort-sel">Sort select</label>
+                <select class="form-control" id="sort-sel" v-model="selectedSort">
+                    <option v-for="sort in sorts">{{sort}}</option>
+                </select>
             </div>
-        </div>
 
-        <div v-if="this.cart.length > 0">
-            <h3>Checkout</h3>
+            <div class="form-group">
+                <label for="sort-ord">Sort order</label>
+                <select class="form-control" id="sort-ord" v-model="sort_ord">
+                    <option v-for="sort_ord in sort_ords">{{sort_ord}}</option>
+                </select>
+            </div>
+
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                <div v-if="Math.abs(lesson.space - cartCount(lesson.id) - 5) > 0" v-for="lesson in lessons">
+                <div v-for="lesson in sortedLessons">
                     <div class="col mb-4">
                         <div class="card">
                             <div class="d-flex justify-content-center">
@@ -64,16 +41,84 @@
                                 <div class="card-text">
                                     Price:{{lesson.price}} <br>
                                     Location: {{lesson.location}}<br>
-                                    Quantity: {{Math.abs(lesson.space - cartCount(lesson.id) - 5)}}<br>
+                                    Space: {{lesson.space - cartCount(lesson.id)}}<br>
                                 </div>
                                 <br>
-                                <button class="btn btn-danger" @click="removeFromCart(lesson)">Remove item</button>
+                                <button @click="addToCart(lesson)" class="btn btn-primary" v-if="canAddToCart(lesson)">
+                                    Add
+                                    item
+                                </button>
+                                <button class="btn btn btn-secondary" disabled="disabled" v-else>Sold Out!</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div v-if="this.cart.length > 0">
+                <h3>Checkout</h3>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                    <div v-for="lesson in lessons" v-if="Math.abs(lesson.space - cartCount(lesson.id) - 5) > 0">
+                        <div class="col mb-4">
+                            <div class="card">
+                                <div class="d-flex justify-content-center">
+                                    <span style="font-size: 10vw;" v-bind:class="lesson.icon"></span>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{lesson.subject}}</h5>
+                                    <div class="card-text">
+                                        Price:{{lesson.price}} <br>
+                                        Location: {{lesson.location}}<br>
+                                        Quantity: {{Math.abs(lesson.space - cartCount(lesson.id) - 5)}}<br>
+                                    </div>
+                                    <br>
+                                    <button @click="removeFromCart(lesson)" class="btn btn-danger">Remove item</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success" v-on:click="showCheckout">Checkout</button>
+            </div>
         </div>
+    </div>
+    <div v-else>
+        <h2>Checkout</h2>
+        <button class="btn btn-success" v-on:click="showCheckout">Back to Lessons</button>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+            <div v-for="lesson in lessons" v-if="Math.abs(lesson.space - cartCount(lesson.id) - 5) > 0">
+                <div class="col mb-4">
+                    <div class="card">
+                        <div class="d-flex justify-content-center">
+                            <span style="font-size: 10vw;" v-bind:class="lesson.icon"></span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{lesson.subject}}</h5>
+                            <div class="card-text">
+                                Price:{{lesson.price}} <br>
+                                Location: {{lesson.location}}<br>
+                                Quantity: {{Math.abs(lesson.space - cartCount(lesson.id) - 5)}}<br>
+                            </div>
+                            <br>
+                            <button @click="removeFromCart(lesson)" class="btn btn-danger">Remove item</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form>
+            <div class="form-group">
+                <input class="form-control" placeholder="Enter name" v-model="cust_name"
+                       v-on:keypress="isLetter($event)">
+                <input class="form-control" placeholder="Enter phone" v-model="cust_num"
+                       v-on:keypress="isNumber($event)">
+            </div>
+            <button class="btn btn-primary" onclick="alert('order placed')"
+                    v-if="!(cust_name === '' || cust_num.valueOf === '')">Checkout Order
+            </button>
+        </form>
+
     </div>
 </div>
 
@@ -88,8 +133,14 @@
             sort_ord: 'asc',
             sort_ords: ['asc', 'desc'],
             cart: [],
+            showLessons: true,
+            cust_name: '',
+            cust_num: '',
         },
         methods: {
+            showCheckout: function () {
+                this.showLessons = !this.showLessons;
+            },
             addToCart: function (lesson) {
                 this.cart.push(lesson.id);
             },
@@ -110,6 +161,16 @@
                     }
                 }
                 return count;
+            },
+            isLetter(e) {
+                let char = String.fromCharCode(e.keyCode);
+                if (/^[A-Za-z]+$/.test(char)) return true;
+                else e.preventDefault();
+            },
+            isNumber(e) {
+                let char = String.fromCharCode(e.keyCode);
+                if (/^[0-9]+$/.test(char)) return true;
+                else e.preventDefault();
             }
         },
         computed: {
