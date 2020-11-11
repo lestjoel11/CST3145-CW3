@@ -11,21 +11,19 @@
 <body>
 
 <div id="app">
-
     <div v-if="showLessons">
         <div class="container">
-
             <div class="form-group">
-                <label for="sort-sel">Sort select</label>
-                <select class="form-control" id="sort-sel" v-model="selectedSort">
+                <label for="sort-sel">Sort By:</label>
+                <select class="form-control" id="sort-sel" v-model="selSortBy">
                     <option v-for="sort in sorts">{{sort}}</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="sort-ord">Sort order</label>
-                <select class="form-control" id="sort-ord" v-model="sort_ord">
-                    <option v-for="sort_ord in sort_ords">{{sort_ord}}</option>
+                <select class="form-control" id="sort-ord" v-model="selSortOrd">
+                    <option v-for="selSortOrd in sort_ords">{{selSortOrd}}</option>
                 </select>
             </div>
 
@@ -44,17 +42,17 @@
                                     Space: {{lesson.space - cartCount(lesson.id)}}<br>
                                 </div>
                                 <br>
-                                <button @click="addToCart(lesson)" class="btn btn-primary" v-if="canAddToCart(lesson)">
-                                    Add
-                                    item
+                                <button v-if="canAddToCart(lesson)" @click="addToCart(lesson)" class="btn btn-primary">
+                                    Add item
                                 </button>
-                                <button class="btn btn btn-secondary" disabled="disabled" v-else>Sold Out!</button>
+                                <button class="btn btn-secondary" disabled v-else>Sold Out!</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- display cart only  > 0 -->
             <div v-if="this.cart.length > 0">
                 <h3>Checkout</h3>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
@@ -82,6 +80,8 @@
             </div>
         </div>
     </div>
+
+    <!-- checkout page -->
     <div v-else>
         <h2>Checkout</h2>
         <button class="btn btn-success" v-on:click="showCheckout">Back to Lessons</button>
@@ -110,12 +110,12 @@
         <form>
             <div class="form-group">
                 <input class="form-control" placeholder="Enter name" v-model="cust_name"
-                       v-on:keypress="isLetter($event)">
+                       v-on:keypress="checkChar($event, 'string')">
                 <input class="form-control" placeholder="Enter phone" v-model="cust_num"
-                       v-on:keypress="isNumber($event)">
+                       v-on:keypress="checkChar($event, 'num')">
             </div>
             <button class="btn btn-primary" onclick="alert('order placed')"
-                    v-if="!(cust_name === '' || cust_num.valueOf === '')">Checkout Order
+                    v-if="!(cust_name === '' || cust_num === '')">Checkout Order
             </button>
         </form>
 
@@ -128,96 +128,64 @@
         el: '#app',
         data: {
             lessons: lessons,
-            selectedSort: 'price',
-            sorts: ['price', 'subject', 'space', 'location'],
-            sort_ord: 'asc',
-            sort_ords: ['asc', 'desc'],
+            sorts: ['Price', 'Subject', 'Space', 'Location'],
+            sort_ords: ['Ascending', 'Descending'],
+            selSortBy: 'Price',
+            selSortOrd: 'Ascending',
             cart: [],
             showLessons: true,
             cust_name: '',
             cust_num: '',
         },
         methods: {
-            showCheckout: function () {
-                this.showLessons = !this.showLessons;
+            canAddToCart(lesson) {
+                return lesson.space > this.cartCount(lesson.id);
             },
-            addToCart: function (lesson) {
+            addToCart(lesson) {
                 this.cart.push(lesson.id);
             },
-            removeFromCart: function (lesson) {
+            removeFromCart(lesson) {
                 const index = this.cart.indexOf(lesson.id);
                 if (index > -1) {
                     this.cart.splice(index, 1);
                 }
             },
-            canAddToCart: function (lesson) {
-                return lesson.space > this.cartCount(lesson.id);
-            },
             cartCount(id) {
                 let count = 0;
-                for (let i = 0; i < this.cart.length; i++) {
-                    if (this.cart[i] === id) {
+                this.cart.forEach(item => {
+                    if (item === id) {
                         count++;
                     }
-                }
+                });
                 return count;
             },
-            isLetter(e) {
-                let char = String.fromCharCode(e.keyCode);
-                if (/^[A-Za-z]+$/.test(char)) return true;
-                else e.preventDefault();
+            showCheckout() {
+                this.showLessons = !this.showLessons;
             },
-            isNumber(e) {
+            checkChar(e, type) {
                 let char = String.fromCharCode(e.keyCode);
-                if (/^[0-9]+$/.test(char)) return true;
-                else e.preventDefault();
+                if (type === "string") {
+                    if (/^[A-Za-z]+$/.test(char)) return true;
+                    else e.preventDefault();
+                } else if (type === "num") {
+                    if (/^[0-9]+$/.test(char)) return true;
+                    else e.preventDefault();
+                }
             }
         },
         computed: {
-            sortedLessons() {
-                let lessonsArray = this.lessons.slice(0);
+            sortedLessons: function () {
+                let lessonsArray = this.lessons.slice(0)
+                let field = this.selSortBy.toLowerCase();
 
-                function price(a, b) {
-                    if (a.price > b.price) return 1;
-                    if (a.price < b.price) return -1;
-                    return 0;
+                function sorter(a, b) {
+                    if (a[field] > b[field]) return 1;
+                    if (a[field] < b[field]) return -1;
                 }
 
-                function space(a, b) {
-                    if (a.space < b.space) return -1;
-                    if (a.space > b.space) return 1;
-                    return 0;
-                }
+                lessonsArray.sort(sorter)
 
-                function subject(a, b) {
-                    if (a.subject < b.subject) return -1;
-                    if (a.subject > b.subject) return 1;
-                    return 0;
-                }
-
-                function location(a, b) {
-                    if (a.location < b.location) return -1;
-                    if (a.location > b.location) return 1;
-                    return 0;
-                }
-
-                switch (this.selectedSort) {
-                    case "price":
-                        lessonsArray.sort(price)
-                        break;
-                    case "space":
-                        lessonsArray.sort(space)
-                        break;
-                    case "subject":
-                        lessonsArray.sort(subject)
-                        break;
-                    case "location":
-                        lessonsArray.sort(location)
-                        break;
-
-                }
-
-                if (this.sort_ord === 'desc')
+                if (this.selSortOrd === 'Descending')
                     lessonsArray.sort().reverse()
 
                 return lessonsArray;
