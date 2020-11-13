@@ -39,10 +39,10 @@
                                 <div class="card-text">
                                     Price:{{lesson.price}} <br>
                                     Location: {{lesson.location}}<br>
-                                    Space: {{lesson.space - cartCount(lesson.id)}}<br>
+                                    Space: {{lesson.space}}<br>
                                 </div>
                                 <br>
-                                <button v-if="canAddToCart(lesson)" @click="addToCart(lesson)" class="btn btn-primary">
+                                <button @click="addToCart(lesson)" class="btn btn-primary" v-if="canAddToCart(lesson)">
                                     Add item
                                 </button>
                                 <button class="btn btn-secondary" disabled v-else>Sold Out!</button>
@@ -56,7 +56,7 @@
             <div v-if="this.cart.length > 0">
                 <h3>Checkout</h3>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                    <div v-for="lesson in lessons" v-if="Math.abs(lesson.space - cartCount(lesson.id) - 5) > 0">
+                    <div v-for="lesson in lessons" v-if="5 - lesson.space > 0">
                         <div class="col mb-4">
                             <div class="card">
                                 <div class="d-flex justify-content-center">
@@ -67,7 +67,7 @@
                                     <div class="card-text">
                                         Price:{{lesson.price}} <br>
                                         Location: {{lesson.location}}<br>
-                                        Quantity: {{Math.abs(lesson.space - cartCount(lesson.id) - 5)}}<br>
+                                        Quantity: {{5 - lesson.space}}<br>
                                     </div>
                                     <br>
                                     <button @click="removeFromCart(lesson)" class="btn btn-danger">Remove item</button>
@@ -86,7 +86,7 @@
         <h2>Checkout</h2>
         <button class="btn btn-success" v-on:click="showCheckout">Back to Lessons</button>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-            <div v-for="lesson in lessons" v-if="Math.abs(lesson.space - cartCount(lesson.id) - 5) > 0">
+            <div v-for="lesson in lessons" v-if="5 - lesson.space > 0">
                 <div class="col mb-4">
                     <div class="card">
                         <div class="d-flex justify-content-center">
@@ -97,7 +97,7 @@
                             <div class="card-text">
                                 Price:{{lesson.price}} <br>
                                 Location: {{lesson.location}}<br>
-                                Quantity: {{Math.abs(lesson.space - cartCount(lesson.id) - 5)}}<br>
+                                Quantity: {{5 - lesson.space}}<br>
                             </div>
                             <br>
                             <button @click="removeFromCart(lesson)" class="btn btn-danger">Remove item</button>
@@ -139,25 +139,18 @@
         },
         methods: {
             canAddToCart(lesson) {
-                return lesson.space > this.cartCount(lesson.id);
+                return 5 > (5 - lesson.space);
             },
             addToCart(lesson) {
                 this.cart.push(lesson.id);
+                lesson.space--;
             },
             removeFromCart(lesson) {
                 const index = this.cart.indexOf(lesson.id);
                 if (index > -1) {
                     this.cart.splice(index, 1);
                 }
-            },
-            cartCount(id) {
-                let count = 0;
-                this.cart.forEach(item => {
-                    if (item === id) {
-                        count++;
-                    }
-                });
-                return count;
+                lesson.space++;
             },
             showCheckout() {
                 this.showLessons = !this.showLessons;
