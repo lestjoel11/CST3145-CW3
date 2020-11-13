@@ -7,42 +7,48 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
     <script src="lessons.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/css/bootstrap-switch-button.min.css"
+          rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
 
-<div id="app">
+<div class="container" id="app">
     <div v-if="showLessons">
+        <nav class="navbar navbar-light my-2 font-weight-bold">
+            <a class="navbar-brand" style="font-size: 1.5em;">
+                <span class="fas fa-graduation-cap" style="text-align: center"> steadyStudy</span>
+            </a>
+            <div class="navbar-right">
+                <form class="form-inline">
+                <span class="button custom-select">
+                <select v-model="selSortBy"><option v-for="sort in sorts">{{sort}}</option></select>
+            </span>
+                    <span class="button custom-select">
+                <select v-model="selSortOrd"><option v-for="sort_ord in sort_ords">{{sort_ord}}</option></select>
+            </span>
+                </form>
+            </div>
+        </nav>
         <div class="container">
-            <div class="form-group">
-                <label for="sort-sel">Sort By:</label>
-                <select class="form-control" id="sort-sel" v-model="selSortBy">
-                    <option v-for="sort in sorts">{{sort}}</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="sort-ord">Sort order</label>
-                <select class="form-control" id="sort-ord" v-model="selSortOrd">
-                    <option v-for="selSortOrd in sort_ords">{{selSortOrd}}</option>
-                </select>
-            </div>
-
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
                 <div v-for="lesson in sortedLessons">
                     <div class="col mb-4">
-                        <div class="card">
-                            <div class="d-flex justify-content-center">
-                                <span style="font-size: 10vw;" v-bind:class="lesson.icon"></span>
-                            </div>
+                        <div class="card" style="border-radius: 25px;">
                             <div class="card-body">
                                 <h5 class="card-title">{{lesson.subject}}</h5>
+                                <div class="d-flex justify-content-center" style="padding-bottom: 1rem">
+                                    <span style="font-size: 10vw; text-shadow:3px 6px rgba(255,165,0,.75)"
+                                          v-bind:class="lesson.icon"></span>
+                                </div>
                                 <div class="card-text">
-                                    Price:{{lesson.price}} <br>
+                                    Price: {{lesson.price}}$ <br>
                                     Location: {{lesson.location}}<br>
                                     Space: {{lesson.space}}<br>
                                 </div>
                                 <br>
-                                <button @click="addToCart(lesson)" class="btn btn-primary" v-if="canAddToCart(lesson)">
+                                <button @click="addToCart(lesson)" class="btn btn-warning"
+                                        v-if="canAddToCart(lesson)">
                                     Add item
                                 </button>
                                 <button class="btn btn-secondary" disabled v-else>Sold Out!</button>
@@ -54,71 +60,114 @@
 
             <!-- display cart only  > 0 -->
             <div v-if="this.cart.length > 0">
-                <h3>Checkout</h3>
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                    <div v-for="lesson in lessons" v-if="5 - lesson.space > 0">
-                        <div class="col mb-4">
-                            <div class="card">
-                                <div class="d-flex justify-content-center">
-                                    <span style="font-size: 10vw;" v-bind:class="lesson.icon"></span>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{lesson.subject}}</h5>
-                                    <div class="card-text">
-                                        Price:{{lesson.price}} <br>
-                                        Location: {{lesson.location}}<br>
-                                        Quantity: {{5 - lesson.space}}<br>
-                                    </div>
-                                    <br>
-                                    <button @click="removeFromCart(lesson)" class="btn btn-danger">Remove item</button>
-                                </div>
-                            </div>
+                <div style="background-color: white; border-radius: 20px;">
+                    <nav class="navbar navbar-light my-2 font-weight-bold">
+                        <a class="navbar-brand" style="font-size: 1.5em;">
+                            <span class="fas fa-shopping-cart" style="text-align: center"> Shopping Cart</span>
+                        </a>
+                        <div class="navbar-right">
+                            <button class="btn btn-warning" v-on:click="showCheckout">Checkout</button>
                         </div>
+                    </nav>
+                    <div>
+
+                        <table class="table table-condensed" id="cart">
+                            <thead>
+                            <tr>
+                                <th style="width:40%">Lesson</th>
+                                <th style="width:25%">Price</th>
+                                <th style="width:25%">Quantity</th>
+                                <th style="width:40%">Remove</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="lesson in lessons" v-if="5 - lesson.space > 0">
+                                <td data-th="Lesson"><span style="text-align: center; font-size: 1.5em"
+                                                           v-bind:class="lesson.icon"> {{lesson.subject}}</span>
+                                </td>
+                                <td data-th="Price">{{lesson.price}}</td>
+                                <td data-th="Quantity">{{5 - lesson.space}}</td>
+                                <td data-th="Remove">
+                                    <button @click="removeFromCart(lesson)" class="btn btn-danger">Remove</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <button class="btn btn-success" v-on:click="showCheckout">Checkout</button>
             </div>
         </div>
     </div>
 
     <!-- checkout page -->
     <div v-else>
-        <h2>Checkout</h2>
-        <button class="btn btn-success" v-on:click="showCheckout">Back to Lessons</button>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-            <div v-for="lesson in lessons" v-if="5 - lesson.space > 0">
-                <div class="col mb-4">
-                    <div class="card">
-                        <div class="d-flex justify-content-center">
-                            <span style="font-size: 10vw;" v-bind:class="lesson.icon"></span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{lesson.subject}}</h5>
-                            <div class="card-text">
-                                Price:{{lesson.price}} <br>
-                                Location: {{lesson.location}}<br>
-                                Quantity: {{5 - lesson.space}}<br>
-                            </div>
-                            <br>
-                            <button @click="removeFromCart(lesson)" class="btn btn-danger">Remove item</button>
-                        </div>
+        <nav class="navbar navbar-light my-2 font-weight-bold">
+            <a class="navbar-brand" style="font-size: 1.5em;">
+                <span class="fas fa-graduation-cap" style="text-align: center"> steadyStudy</span>
+            </a>
+            <div class="navbar-right">
+                <button class="btn btn-warning" v-on:click="showCheckout">Back to Lessons</button>
+            </div>
+        </nav>
+        <div class="row">
+            <div class="col-6">
+                <div style="background-color: white; border-radius: 20px;">
+                    <nav class="navbar navbar-light my-2 font-weight-bold">
+                        <a class="navbar-brand" style="font-size: 1.5em;">
+                            <span class="fas fa-shopping-cart" style="text-align: center"> Shopping Cart</span>
+                        </a>
+                    </nav>
+                    <div>
+
+                        <table class="table table-condensed" id="cart">
+                            <thead>
+                            <tr>
+                                <th style="width:40%">Lesson</th>
+                                <th style="width:25%">Price</th>
+                                <th style="width:25%">Quantity</th>
+                                <th style="width:40%">Remove</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="lesson in lessons" v-if="5 - lesson.space > 0">
+                                <td data-th="Lesson"><span style="text-align: center; font-size: 1em"
+                                                           v-bind:class="lesson.icon"> {{lesson.subject}}</span>
+                                </td>
+                                <td data-th="Price">{{lesson.price}}</td>
+                                <td data-th="Quantity">{{5 - lesson.space}}</td>
+                                <td data-th="Remove">
+                                    <button @click="removeFromCart(lesson)" class="btn btn-danger">Remove</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="col-6">
+                <div style="background-color: white; border-radius: 20px;">
+                    <nav class="navbar navbar-light my-2 font-weight-bold">
+                        <a class="navbar-brand" style="font-size: 1.5em;">
+                            <span class="fas fa-user" style="text-align: center"> Billing Details</span>
+                        </a>
+                        <div class="navbar-right">
+                            <button class="btn btn-dark" onclick="alert('Order Placed')"
+                                    v-if="!(cust_name === '' || cust_num === '')">Checkout Order
+                            </button>
+                        </div>
+                    </nav>
+                    <form>
+                        <div class="form-group">
+                            <input class="form-control" placeholder="Enter name" style="width: 95%" v-model="cust_name"
+                                   v-on:keypress="checkChar($event, 'string')">
+                            <input class="form-control" placeholder="Enter phone" style="width: 95%" v-model="cust_num"
+                                   v-on:keypress="checkChar($event, 'num')">
+                        </div>
 
-        <form>
-            <div class="form-group">
-                <input class="form-control" placeholder="Enter name" v-model="cust_name"
-                       v-on:keypress="checkChar($event, 'string')">
-                <input class="form-control" placeholder="Enter phone" v-model="cust_num"
-                       v-on:keypress="checkChar($event, 'num')">
+                    </form>
+                </div>
             </div>
-            <button class="btn btn-primary" onclick="alert('order placed')"
-                    v-if="!(cust_name === '' || cust_num === '')">Checkout Order
-            </button>
-        </form>
-
+        </div>
     </div>
 </div>
 
@@ -190,5 +239,6 @@
 <!-- cdn -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js"></script>
 </body>
 </html>
