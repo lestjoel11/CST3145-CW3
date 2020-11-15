@@ -3,7 +3,7 @@ let lessons = [
         id: 1,
         subject: 'Maths',
         location: 'London',
-        price: 1001,
+        price: 399,
         space: 5,
         icon: "fas fa-square-root-alt"
     },
@@ -11,7 +11,7 @@ let lessons = [
         id: 2,
         subject: 'Science',
         location: 'Dubai',
-        price: 1002,
+        price: 699,
         space: 5,
         icon: "fas fa-atom"
     },
@@ -19,7 +19,7 @@ let lessons = [
         id: 3,
         subject: 'Geography',
         location: 'Malta',
-        price: 1003,
+        price: 249,
         space: 5,
         icon: "fas fa-globe-americas"
     },
@@ -27,7 +27,7 @@ let lessons = [
         id: 4,
         subject: 'Arts',
         location: 'Malta',
-        price: 1004,
+        price: 599,
         space: 5,
         icon: "fas fa-palette"
     },
@@ -35,7 +35,7 @@ let lessons = [
         id: 5,
         subject: 'Business',
         location: 'London',
-        price: 1005,
+        price: 999,
         space: 5,
         icon: "fas fa-briefcase"
     },
@@ -43,7 +43,7 @@ let lessons = [
         id: 6,
         subject: 'Law',
         location: 'Malta',
-        price: 1006,
+        price: 749,
         space: 5,
         icon: "fas fa-landmark"
     },
@@ -51,7 +51,7 @@ let lessons = [
         id: 7,
         subject: 'Engineering',
         location: 'Dubai',
-        price: 1007,
+        price: 1249,
         space: 5,
         icon: "fas fa-laptop-code"
     },
@@ -59,7 +59,7 @@ let lessons = [
         id: 8,
         subject: 'Accounting',
         location: 'Dubai',
-        price: 1008,
+        price: 1100,
         space: 5,
         icon: "fas fa-balance-scale-right"
     },
@@ -67,7 +67,7 @@ let lessons = [
         id: 9,
         subject: 'Architecture',
         location: 'London',
-        price: 1009,
+        price: 899,
         space: 5,
         icon: "fas fa-torii-gate"
     },
@@ -75,7 +75,7 @@ let lessons = [
         id: 10,
         subject: 'Medicine',
         location: 'Malta',
-        price: 1010,
+        price: 649,
         space: 5,
         icon: "fas fa-stethoscope"
     },
