@@ -229,7 +229,7 @@
                 return order_deets;
             },
             postOrder: function (order_deets) {
-                fetch('http://localhost:3000/collection/orders', {
+                fetch('https://cst3145-cw1-backend.herokuapp.com/collection/orders', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -239,7 +239,7 @@
             },
             updateLessons: function (order_deets) {
                 order_deets.items.forEach(item => {
-                    fetch(`http://localhost:3000/collection/details/${item.subject}/${item.quantity}`, {
+                    fetch(`https://cst3145-cw1-backend.herokuapp.com/collection/details/${item.subject}/${item.quantity}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -276,7 +276,7 @@
             }
         },
         async created() {
-            fetch('http://localhost:3000/collection/details')
+            fetch('https://cst3145-cw1-backend.herokuapp.com/collection/details')
                 .then(res => res.json())
                 .then(data => obj = data)
                 .then(() => this.lessons = obj)
