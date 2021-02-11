@@ -188,15 +188,17 @@
                 return 5 > (5 - lesson.space);
             },
             addToCart(lesson) {
-                this.cart.push(lesson.id);
+                if (this.cart.find(item => item.subject === lesson.subject) !== undefined) {
+                    this.cart.find(item => item.subject === lesson.subject).space++
+                } else {
+                    this.cart.push(JSON.parse(JSON.stringify(lesson)))
+                    this.cart.find(item => item.subject === lesson.subject).space = 1
+                }
                 lesson.space--;
             },
             removeFromCart(lesson) {
-                const index = this.cart.indexOf(lesson.id);
-                if (index > -1) {
-                    this.cart.splice(index, 1);
-                }
-                lesson.space++;
+                this.lessons.find(item => item.subject === lesson.subject).space++
+                this.cart.find(item => item.subject === lesson.subject).space--
             },
             showCheckout() {
                 this.showLessons = !this.showLessons;
