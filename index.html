@@ -237,9 +237,21 @@
                     body: JSON.stringify(order_deets)
                 }).then(res => res.json());
             },
+            updateLessons: function (order_deets) {
+                order_deets.items.forEach(item => {
+                    fetch(`http://localhost:3000/collection/details/${item.subject}/${item.quantity}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: ""
+                    }).then(res => res.json())
+                })
+            },
             checkout() {
                 let order_deets = this.getOrderDetails();
                 this.postOrder(order_deets);
+                this.updateLessons(order_deets);
 
                 this.cart = [];
                 alert('Order Placed')
