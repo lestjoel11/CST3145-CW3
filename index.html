@@ -5,7 +5,6 @@
     <!-- cdn -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
-    <script src="lessons.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 </head>
@@ -174,7 +173,7 @@
     new Vue({
         el: '#app',
         data: {
-            lessons: lessons,
+            lessons: [],
             sorts: ['Price', 'Subject', 'Space', 'Location'],
             sort_ords: ['Ascending', 'Descending'],
             selSortBy: 'Price',
@@ -230,6 +229,12 @@
 
                 return lessonsArray;
             }
+        },
+        async created() {
+            fetch('http://localhost:3000/collection/details')
+                .then(res => res.json())
+                .then(data => obj = data)
+                .then(() => this.lessons = obj)
         }
     });
 </script>
