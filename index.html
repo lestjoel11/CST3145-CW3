@@ -143,24 +143,23 @@
             </div>
             <div class="col-6">
                 <div style="background-color: white; border-radius: 20px;">
-                    <nav class="navbar navbar-light my-2 font-weight-bold">
-                        <a class="navbar-brand" style="font-size: 1.5em;">
-                            <span class="fas fa-user" style="text-align: center"> Billing Details</span>
-                        </a>
-                        <div class="navbar-right">
-                            <button class="btn btn-dark" onclick="alert('Order Placed')"
-                                    v-if="!(cust_name === '' || cust_num === '')">Checkout Order
-                            </button>
-                        </div>
-                    </nav>
-                    <form>
+                    <form method="post">
+                        <nav class="navbar navbar-light my-2 font-weight-bold">
+                            <a class="navbar-brand" style="font-size: 1.5em;">
+                                <span class="fas fa-user" style="text-align: center"> Billing Details</span>
+                            </a>
+                            <div class="navbar-right">
+                                <button @click="checkout" class="btn btn-dark"
+                                        v-if="!(cust_name === '' || cust_num === '')">Checkout Order
+                                </button>
+                            </div>
+                        </nav>
                         <div class="form-group">
                             <input class="form-control" placeholder="Enter name" style="width: 95%" v-model="cust_name"
                                    v-on:keypress="checkChar($event, 'string')">
                             <input class="form-control" placeholder="Enter phone" style="width: 95%" v-model="cust_num"
                                    v-on:keypress="checkChar($event, 'num')">
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -212,6 +211,38 @@
                     if (/^[0-9]+$/.test(char)) return true;
                     else e.preventDefault();
                 }
+            },
+            getOrderDetails: function () {
+                let order_deets = {
+                    "custName": this.cust_name,
+                    "custNum": this.cust_num,
+                    "items": []
+                }
+
+                this.cart.forEach(product => {
+                    order_deets.items.push({
+                        "subject": product.subject,
+                        "quantity": product.space
+                    })
+                })
+
+                return order_deets;
+            },
+            postOrder: function (order_deets) {
+                fetch('http://localhost:3000/collection/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(order_deets)
+                }).then(res => res.json());
+            },
+            checkout() {
+                let order_deets = this.getOrderDetails();
+                this.postOrder(order_deets);
+
+                this.cart = [];
+                alert('Order Placed')
             }
         },
         computed: {
