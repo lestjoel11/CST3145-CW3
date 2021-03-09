@@ -1,7 +1,6 @@
 var cacheName = 'afterschool';
 var cacheFiles = [
     'index.html',
-    'products.js',
     'afterschool.webmanifest',
     'assets/icon.png',
 ];
