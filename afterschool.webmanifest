@@ -12,6 +12,6 @@
     "background_color": "#B12A34",
     "origin": "*",
     "methods":"GET,HEAD,PUT,PATCH,POST,DELETE",
-    "description": "my online pet store",
+    "description": "AfterSchool PWA",
     "display": "fullscreen"
 }
