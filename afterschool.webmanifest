@@ -3,7 +3,7 @@
     "short_name": "AfterSchool",
     "icons": [
             {
-                "src": "images/icon-store-512.png",
+                "src": "assets/icon.png",
                 "sizes": "512x512",
                 "type": "image/png"
             }
