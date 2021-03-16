@@ -1,0 +1,17 @@
+{
+    "name": "AfterSchool PWA",
+    "short_name": "AfterSchool",
+    "icons": [
+            {
+                "src": "icon.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            }
+        ],
+    "start_url": "index.html",
+    "background_color": "#B12A34",
+    "origin": "*",
+    "methods":"GET,HEAD,PUT,PATCH,POST,DELETE",
+    "description": "AfterSchool PWA",
+    "display": "fullscreen"
+}
